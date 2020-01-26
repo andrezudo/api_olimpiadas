@@ -5,18 +5,26 @@ session_start();
 include_once("../backend/conexao.php");
 
 $competicao = $_SESSION['competicao'];
+
 $cont = 1;
 
 //selecionar a competição criada
-$sql_com = "SELECT `id` FROM `ta_cem_metros` WHERE `competicao` LIKE '$competicao'";
+$sql_com = "SELECT `id` FROM `ta_lan` WHERE `competicao` LIKE '$competicao'";
 $salvar_com = mysqli_query($conn, $sql_com);
 while ($seleciona_com = mysqli_fetch_array($salvar_com)) {
     $id_com = $seleciona_com['id'];
 }
 
+
+
+
+
 //seleciona os atletas da competição selecionada
-$sql_atletas = "SELECT * FROM `ta_atletas` WHERE `id_competicao` = $id_com ORDER BY `tempo` ASC";
+$sql_atletas = "SELECT * FROM `ta_atletas_lan` WHERE `id_competicao` = $id_com ORDER BY `total` DESC";
 $salvar_atletas = mysqli_query($conn, $sql_atletas);
+
+
+
 
 
 
@@ -28,7 +36,7 @@ $salvar_atletas = mysqli_query($conn, $sql_atletas);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>SysCOB - 100 metros rasos</title>
+  <title>SysCOB - Lançamento</title>
   <link rel="stylesheet" href="./../node_modules/bootstrap/compiler/bootstrap.css">
   <link rel="stylesheet" href="./../node_modules/bootstrap/compiler/style.css">
 </head>
@@ -50,37 +58,56 @@ $salvar_atletas = mysqli_query($conn, $sql_atletas);
 
   </nav>
 
-    <div class="container">
-            <div class="col-12 text-center my-4">
-                <h2>Resultado final da competição de 100 metros rasos</h2>
-                <h3>Nome da competição: <?php echo $_SESSION['competicao'] ?></h3>
-            </div>
-    </div>
+  <?php
+  if (isset($_SESSION['msg'])) {
+    echo $_SESSION['msg'];
+    unset($_SESSION['msg']);
+  }
+  ?>
 
   <div class="container">
-
     <div class="row">
+
+      <div class="col-12 text-center my-3">
+        <h2>Criando uma competição de dardo</h2>
+        <h3>Nome da competição: <?php echo $_SESSION['competicao'] ?></h3>
+      </div>
+
+      <div class="pr-3">
+        <a href="#" class="btn btn-success" data-toggle="modal" data-target="#adicionarAtleta">Adicionar competidor</a>
+        <a href="lista_vencedor_lan.php" class="btn btn-danger">Encerrar Competição</a>
+      </div>
 
       <div class="col-12 text-center my-5">
         <table class="table table-bordered">
           <thead>
             <tr>
-              <th scope="col" colspan="3" class="card-header">Rancking completo</th>
+              <th scope="col" colspan="6" class="card-header">Rancking atualizado</th>
             </tr>
           </thead>
           <thead>
             <tr>
               <th scope="col">Posição</th>
               <th scope="col">Atleta</th>
-              <th scope="col">Tempo em segundos</th>
+              <th scope="col">1º lanca.</th>
+              <th scope="col">2º lanca.</th>
+              <th scope="col">3º lanca.</th>
+              <th scope="col">Melhor lançamento</th>
             </tr>
           </thead>
           <tbody>
           <?php while ($exibir_atletas = mysqli_fetch_array($salvar_atletas)) { ?>
             <tr>
               <th scope="row"><?php echo $cont ++; ?>º</th>
-              <td><?php echo $exibir_atletas['atleta']; ?></td>
-              <td><?php echo $exibir_atletas['tempo']; ?></td>
+              <td><?php echo $exibir_atletas['nome']; ?></td>
+              <td><?php echo $exibir_atletas['lan1']; ?></td>
+              <td><?php echo $exibir_atletas['lan2']; ?></td>
+              <td><?php echo $exibir_atletas['lan3']; ?></td>
+              <td><?php echo $exibir_atletas['total']; ?></td>
+
+
+              
+
             </tr>
           <?php } ?>  
           </tbody>
@@ -93,7 +120,7 @@ $salvar_atletas = mysqli_query($conn, $sql_atletas);
           <div class="modal-content">
 
             <div class="modal-header">
-              <h4 class="modal-title">Adicionar Local</h4>
+              <h4 class="modal-title">Adicionar atleta</h4>
               <button type="button" class="close" data-dismiss="modal">
                 <span>&times;</span>
               </button>
@@ -101,14 +128,26 @@ $salvar_atletas = mysqli_query($conn, $sql_atletas);
             </div>
 
             <div class="modal-body">
-              <form method="POST" action="./../backend/add_atleta.php">
+              <form method="POST" action="../backend/add_atleta_lan.php">
                 <div class="form-group">
                   <label>Atleta</label>
-                  <input type="text" name="atleta" class="form-control" placeholder="Nome do Atleta" required="required">
+                  <input type="text" name="nome" class="form-control" placeholder="Nome do Atleta" required="required">
                 </div>
                 <div class="form-group">
-                  <label>Tempo</label>
-                  <input type="number_format" name="tempo" class="form-control" placeholder="Segundos que prova foi finalizada" required="required">
+                  <label>1º lancamento</label>
+                  <input type="float" name="lan1" class="form-control" placeholder="Primeiro lançamento" required="required">
+                </div>
+                <div class="form-group">
+                  <label>2º lancamento</label>
+                  <input type="float" name="lan2" class="form-control" placeholder="Segundo lançamento" required="required">
+                </div>
+                <div class="form-group">
+                  <label>3º lancamento</label>
+                  <input type="float" name="lan3" class="form-control" placeholder="Terceiro lançamento" required="required">
+                </div>
+                <div class="form-group">
+                  <label>Melhor lançamento entre os tres</label>
+                  <input type="float" name="total" class="form-control" placeholder="Digite seu melhor lançamento" required="required">
                 </div>
                 <button type="submit" class="btn btn-success">Adicionar</button>
               </form>
@@ -118,10 +157,8 @@ $salvar_atletas = mysqli_query($conn, $sql_atletas);
         </div>
       </div>
 
-      <a href="../backend/finalizar_100m.php" class="btn btn-danger">Encerrar</a>
-      
     </div>
-</div>
+  </div>
 
   <script src="./../node_modules/jquery/dist/jquery.js"></script>
   <script src="./../node_modules/popper.js/dist/umd/popper.js"></script>

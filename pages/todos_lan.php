@@ -7,7 +7,7 @@ include_once("../backend/conexao.php");
 $cont = 1;
 
 //selecionar todas as competições de 100 m
-$sql_todas = "SELECT * FROM `ta_cem_metros`";
+$sql_todas = "SELECT * FROM `ta_lan`";
 $salvar_todas = mysqli_query($conn, $sql_todas);
 
 //selecionar a competição criada
@@ -31,7 +31,7 @@ $salvar_todas = mysqli_query($conn, $sql_todas);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>SysCOB - 100 metros rasos</title>
+    <title>SysCOB - Lançamento de dardo</title>
     <link rel="stylesheet" href="./../node_modules/bootstrap/compiler/bootstrap.css">
     <link rel="stylesheet" href="./../node_modules/bootstrap/compiler/style.css">
 </head>
@@ -56,23 +56,23 @@ $salvar_todas = mysqli_query($conn, $sql_todas);
 
     <div class="container">
         <div class="col-12 text-center my-3">
-            <h2>Todas as competições de 100 metros rasos</h2>
+            <h2>Todas as competições Lançamento de dardo</h2>
         </div>
 
         <div class="row">
 
             <div class="pr-3">
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#criar_100m">
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#criar_lan">
                     Criar competição
                 </button>
-                <a href="../index.php" class="btn btn-danger">Voltar</a>
+                <a href="./../index.php" class="btn btn-danger">Voltar</a>
             </div>
 
             <?php while ($exibirCompeticoes = mysqli_fetch_array($salvar_todas)) { ?>
 
                 <?php
                 $id_compe = $exibirCompeticoes['id'];
-                $sql_atl = "SELECT * FROM ta_atletas where id_competicao = $id_compe ORDER BY `tempo` ASC";
+                $sql_atl = "SELECT * FROM ta_atletas_lan where id_competicao = $id_compe ORDER BY `total` DESC";
                 $resul_atl = mysqli_query($conn, $sql_atl);
                 ?>
 
@@ -88,15 +88,15 @@ $salvar_todas = mysqli_query($conn, $sql_todas);
                                 <tr>
                                     <th scope="col">Posição</th>
                                     <th scope="col">Atleta</th>
-                                    <th scope="col">Tempo em segundos</th>
+                                    <th scope="col">Lamçamento em metros</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php do { ?>
                                     <tr>
                                         <th scope="row"><?php echo $cont++; ?>º</th>
-                                        <td><?php echo $exibirAtle['atleta'] ?></td>
-                                        <td><?php echo $exibirAtle['tempo'] ?></td>
+                                        <td><?php echo $exibirAtle['nome'] ?></td>
+                                        <td><?php echo $exibirAtle['total'] ?></td>
                                     </tr>
                                 <?php } while ($exibirAtle = mysqli_fetch_array($resul_atl)) ?>
                             </tbody>
@@ -108,12 +108,12 @@ $salvar_todas = mysqli_query($conn, $sql_todas);
 
             <?php } ?>
 
-            <div class="modal fade" id="criar_100m" tabindex="1" role="dialog">
+            <div class="modal fade" id="criar_lan" tabindex="1" role="dialog">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
     
                         <div class="modal-header">
-                            <h4 class="modal-title">100 metros rasos</h4>
+                            <h4 class="modal-title">Lançamento de dardo</h4>
                             <button type="button" class="close" data-dismiss="modal">
                                 <span>&times;</span>
                             </button>
@@ -121,7 +121,7 @@ $salvar_todas = mysqli_query($conn, $sql_todas);
                         </div>
     
                         <div class="modal-body">
-                            <form method="POST" action="../backend/cria_com_100m.php">
+                            <form method="POST" action="../backend/cria_lanca.php">
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Competição</label>

@@ -2,20 +2,21 @@
 
 session_start();
 
+// include_once("./../../backend/conexao.php");
 include_once("../backend/conexao.php");
 
 $competicao = $_SESSION['competicao'];
 $cont = 1;
 
 //selecionar a competição criada
-$sql_com = "SELECT `id` FROM `ta_cem_metros` WHERE `competicao` LIKE '$competicao'";
+$sql_com = "SELECT `id` FROM `ta_lan` WHERE `competicao` LIKE '$competicao'";
 $salvar_com = mysqli_query($conn, $sql_com);
 while ($seleciona_com = mysqli_fetch_array($salvar_com)) {
     $id_com = $seleciona_com['id'];
 }
 
 //seleciona os atletas da competição selecionada
-$sql_atletas = "SELECT * FROM `ta_atletas` WHERE `id_competicao` = $id_com ORDER BY `tempo` ASC";
+$sql_atletas = "SELECT * FROM `ta_atletas_lan` WHERE `id_competicao` = $id_com ORDER BY `total` DESC";
 $salvar_atletas = mysqli_query($conn, $sql_atletas);
 
 
@@ -52,7 +53,7 @@ $salvar_atletas = mysqli_query($conn, $sql_atletas);
 
     <div class="container">
             <div class="col-12 text-center my-4">
-                <h2>Resultado final da competição de 100 metros rasos</h2>
+                <h2>Resultado final da competição de lançamento de dardo</h2>
                 <h3>Nome da competição: <?php echo $_SESSION['competicao'] ?></h3>
             </div>
     </div>
@@ -72,15 +73,15 @@ $salvar_atletas = mysqli_query($conn, $sql_atletas);
             <tr>
               <th scope="col">Posição</th>
               <th scope="col">Atleta</th>
-              <th scope="col">Tempo em segundos</th>
+              <th scope="col">Melhor lançamento</th>
             </tr>
           </thead>
           <tbody>
           <?php while ($exibir_atletas = mysqli_fetch_array($salvar_atletas)) { ?>
             <tr>
               <th scope="row"><?php echo $cont ++; ?>º</th>
-              <td><?php echo $exibir_atletas['atleta']; ?></td>
-              <td><?php echo $exibir_atletas['tempo']; ?></td>
+              <td><?php echo $exibir_atletas['nome']; ?></td>
+              <td><?php echo $exibir_atletas['total']; ?></td>
             </tr>
           <?php } ?>  
           </tbody>
@@ -93,7 +94,7 @@ $salvar_atletas = mysqli_query($conn, $sql_atletas);
           <div class="modal-content">
 
             <div class="modal-header">
-              <h4 class="modal-title">Adicionar Local</h4>
+              <h4 class="modal-title">Adicionar Atleta</h4>
               <button type="button" class="close" data-dismiss="modal">
                 <span>&times;</span>
               </button>
@@ -101,14 +102,26 @@ $salvar_atletas = mysqli_query($conn, $sql_atletas);
             </div>
 
             <div class="modal-body">
-              <form method="POST" action="./../backend/add_atleta.php">
+              <form method="POST" action="../backend/add_atleta_lan.php">
                 <div class="form-group">
                   <label>Atleta</label>
-                  <input type="text" name="atleta" class="form-control" placeholder="Nome do Atleta" required="required">
+                  <input type="text" name="nome" class="form-control" placeholder="Nome do Atleta" required="required">
                 </div>
                 <div class="form-group">
-                  <label>Tempo</label>
-                  <input type="number_format" name="tempo" class="form-control" placeholder="Segundos que prova foi finalizada" required="required">
+                  <label>1º lançamento</label>
+                  <input type="number_format" name="lan1" class="form-control" placeholder="Primeiro que prova foi finalizada" required="required">
+                </div>
+                <div class="form-group">
+                  <label>2º lançamento</label>
+                  <input type="number_format" name="lan2" class="form-control" placeholder="Segundo lançamento" required="required">
+                </div>
+                <div class="form-group">
+                  <label>3º lançamento</label>
+                  <input type="number_format" name="lan3" class="form-control" placeholder="Terceiro lançamento" required="required">
+                </div>
+                <div class="form-group">
+                  <label>Melhor lançamento</label>
+                  <input type="number_format" name="total" class="form-control" placeholder="Digite seu Melhor lançamento" required="required">
                 </div>
                 <button type="submit" class="btn btn-success">Adicionar</button>
               </form>
@@ -118,7 +131,7 @@ $salvar_atletas = mysqli_query($conn, $sql_atletas);
         </div>
       </div>
 
-      <a href="../backend/finalizar_100m.php" class="btn btn-danger">Encerrar</a>
+      <a href="../backend/finalizar_lan.php" class="btn btn-danger">Encerrar</a>
       
     </div>
 </div>

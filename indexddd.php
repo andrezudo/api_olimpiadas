@@ -18,7 +18,7 @@
         aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a class="navbar-brand" href="index.html">SysCOB</a>
+      <a class="navbar-brand" href="index.php">SysCOB</a>
     </div>
   </nav>
 
