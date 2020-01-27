@@ -1,7 +1,6 @@
 # API REST Jogos olimpicos - Trabalho 1
-
-Link do deploy do projeto: 
-<a href="https://safe-dusk-89665.herokuapp.com/index.php">Extensão para o chorme</a> <br>
+ 
+<a href="https://safe-dusk-89665.herokuapp.com/index.php">Link do deploy do projeto no Heroku</a> <br>
 
 ## Passos para usar o sistema.
 
